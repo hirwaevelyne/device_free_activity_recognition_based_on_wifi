@@ -1,0 +1,50 @@
+clc;
+clear;
+ fileName = fullfile([pwd '\data'],'walking1.dat');
+ csi_trace_los = read_bf_file(fileName);
+ l = length(csi_trace_los);
+ 
+ % csiEnergyLos;
+ 
+ for i=1:l 
+    
+     csi_energy_los = csi_trace_los {i};  
+     csi_energy = get_scaled_csi(csi_energy_los);
+     
+     [M N S] = size(csi_energy);
+     
+     if (M >= 2)
+         c = mean(csi_energy);
+         csi_trace = squeeze(c);
+     else
+         csi_trace = squeeze(csi_energy);
+     end
+
+     csiData(i,:) = ifft(sum(csi_trace));
+     csiData1(i,:) = db(abs(csiData(i,:)));
+     
+     %csiData1 = csiData.*(csiData)/max(abs(csiData));
+     
+     %csi_data1 = csi_energy(1,:,:);
+     %csi_trace2 = squeeze(csi_data1); 
+     %csi_data = csi_trace2(1,:);
+
+     % csi_ifft= ifft(csi_data);
+     % csiI =db(abs(csi_ifft));
+     %[max_energy,time_index]=max(csi);
+     %max_time_index(i,:)=time_index;
+ end
+
+meanCSI = mean(csiData1);
+% smoothedCSI = meanCSI.*(meanCSI)/max(abs(meanCSI));
+ 
+figure
+
+spectrogram(meanCSI,[],[],[],[],'yaxis')
+axis([0,30,0,30]);
+xlabel('Time(sec)');
+ylabel('Amplitude');
+% title('Activity: A4 (Lying In)')
+% set(gca,'FontName','Times New Roman','FontSize',10);
+% set(get(gca,'xlabel'),'fontweight','bold','fontsize',12);
+%. set(get(gca,'ylabel'),'fontweight','bold','fontsize',12);
